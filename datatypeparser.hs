@@ -41,7 +41,9 @@ parseAtom = do first <- letter <|> symbol
                           otherwise -> Atom atom
 
 parseNumber :: Parser LispVal
-parseNumber = liftM (Number . read) $ many1 digit
+-- parseNumber = liftM (Number . read) $ many1 digit
+-- http://stackoverflow.com/questions/5320528/monadic-type-confusion
+parseNumber = many1 digit >>= (return . Number . read)
 
 parseExpr :: Parser LispVal
 parseExpr = parseAtom
