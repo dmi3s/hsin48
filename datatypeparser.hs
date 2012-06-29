@@ -25,14 +25,12 @@ data LispVal = Atom String
                | String String
                | Bool Bool
 
+-- http://codereview.stackexchange.com/questions/2406/parsing-strings-with-escaped-characters-using-parsec
 parseEscapedChar :: Parser Char
-parseEscapedChar = do char '\\'
-                      x <- oneOf "\"\\nrt"
-                      return $ case x of
-                        'n' -> '\n'
-                        'r' -> '\r'
-                        't' -> '\t'
-                        otherwise -> x
+parseEscapedChar = char '\\' >> choice (zipWith escapedChar codes replacements)
+                   where escapedChar code replacement = char code >> return replacement
+                         codes        = ['b',  'n',  'f',  'r',  't',  '\\', '\"', '/']
+                         replacements = ['\b', '\n', '\f', '\r', '\t', '\\', '\"', '/']
 
 parseString :: Parser LispVal
 parseString = do char '"'
