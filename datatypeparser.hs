@@ -25,11 +25,17 @@ data LispVal = Atom String
                | String String
                | Bool Bool
 
+parseEscapedChar :: Parser Char
+parseEscapedChar = do char '\\'
+                      x <- oneOf "\"\\"
+                      return x
+
 parseString :: Parser LispVal
 parseString = do char '"'
-                 x <- many (noneOf "\"")
+                 x <- many ( parseEscapedChar <|> noneOf "\"")
                  char '"'
                  return $ String x
+
 
 parseAtom :: Parser LispVal
 parseAtom = do first <- letter <|> symbol
