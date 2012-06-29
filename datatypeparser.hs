@@ -27,8 +27,12 @@ data LispVal = Atom String
 
 parseEscapedChar :: Parser Char
 parseEscapedChar = do char '\\'
-                      x <- oneOf "\"\\"
-                      return x
+                      x <- oneOf "\"\\nrt"
+                      return $ case x of
+                        'n' -> '\n'
+                        'r' -> '\r'
+                        't' -> '\t'
+                        otherwise -> x
 
 parseString :: Parser LispVal
 parseString = do char '"'
