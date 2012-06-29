@@ -1,2 +1,2 @@
-ghc -o result $1
+ghc -package parsec -o result $1
 
